@@ -104,6 +104,7 @@
     <module>zeppelin-web</module>
     <module>zeppelin-server</module>
     <module>zeppelin-distribution</module>
+    <module>R</module>
   </modules>
 
   <properties>
@@ -263,7 +264,7 @@
             </goals>
             <configuration>
               <failOnViolation>true</failOnViolation>
-              <excludes>org/apache/zeppelin/interpreter/thrift/*</excludes>
+              <excludes>org/apache/zeppelin/interpreter/thrift/*,org/apache/zeppelin/r/*</excludes>
             </configuration>
           </execution>
           <execution>
