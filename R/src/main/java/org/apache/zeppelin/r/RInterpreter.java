@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+* Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import java.util.Properties;
 public class RInterpreter extends Interpreter {
     Logger logger = LoggerFactory.getLogger(RInterpreter.class);
     private RConnection connection;
+    public static final String PATH = "repository/conf/machine-learner.xml";
 
     static {
         Interpreter.register("r", RInterpreter.class.getName());
@@ -52,10 +53,12 @@ public class RInterpreter extends Interpreter {
             connection = new RConnection();
             logger.info("Connected to an Rserve instance");
             if(loadKnitr()){
-                logger.info("Knitr loaded successfully");
+                String msg = "Knitr loaded successfully";
+                logger.info(msg);
             }
             else{
-                logger.info("Knitr loading was unsuccessful");
+                String msg = "Knitr loading was unsuccessful";
+                logger.info(msg);
             }
 
             connection.voidEval("getFunctionNames <- function() {\n" +
@@ -64,13 +67,16 @@ public class RInterpreter extends Interpreter {
                     "    return(sort(unlist(lapply(loaded, lsf.str))))\n" +
                     "}");
             if (loadSparkR()) {
-                logger.info("sparkR loaded successfully");
+                String msg = "sparkR loaded successfully";
+                logger.info(msg);
             }
             else{
-                logger.info("sparkR loading was unsuccessful");
+                String msg = "sparkR loading was unsuccessful";
+                logger.info(msg);
             }
         } catch (RserveException e) {
-            logger.error("No Rserve instance available!", e);
+            String msg = "No Rserve instance available!";
+            logger.error(msg, e);
         }
     }
 
@@ -79,7 +85,8 @@ public class RInterpreter extends Interpreter {
             connection.shutdown();
             logger.info("Shutting down Rserve");
         } catch (RserveException e) {
-            e.getMessage();
+            String msg = "Error while shutting down R interpreter";
+            logger.error(msg, e);
         }
     }
 
@@ -131,7 +138,8 @@ public class RInterpreter extends Interpreter {
                     writer.close();
                 }
             } catch (Exception e) {
-                logger.error("Exception while closing BufferedWriter", e.getMessage());
+                String msg = "Exception while closing BufferedWriterr";
+                logger.error(msg, e);
             }
         }
     }
@@ -176,13 +184,13 @@ public class RInterpreter extends Interpreter {
                         list.add(s);
                 }
             }
-
         } catch (RserveException e) {
-            logger.warn(e.getMessage());
+            String msg = e.getMessage();
+            logger.warn(msg, e);
         } catch (REXPMismatchException e) {
-            logger.warn(e.getMessage());
+            String msg = e.getMessage();
+            logger.warn(msg, e);
         }
-
         return list;
     }
 
@@ -198,7 +206,8 @@ public class RInterpreter extends Interpreter {
             connection.voidEval("sqlContext <- sparkRSQL.init(sc)");
             return true;
         } catch (RserveException e) {
-            logger.warn("Error while loading sparkR", e.getMessage());
+            String msg = "Exception while closing BufferedWriterr";
+            logger.warn(msg, e);
         }
 
         return false;
@@ -212,9 +221,12 @@ public class RInterpreter extends Interpreter {
                 return true;
             }
         } catch (RserveException e) {
-            logger.error("Error while loading knitr", e.getMessage());
+            String msg = "Error while loading knitr";
+            logger.error(msg, e);
+
         } catch (REXPMismatchException e) {
-            logger.error("Regular expression mismatch error",e.getMessage());
+            String msg = "Regular expression mismatch error";
+            logger.error(msg, e);
         }
         return false;
     }
