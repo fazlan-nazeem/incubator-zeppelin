@@ -52,11 +52,10 @@ public class RInterpreter extends Interpreter {
         try {
             connection = new RConnection();
             logger.info("Connected to an Rserve instance");
-            if(loadKnitr()){
+            if (loadKnitr()) {
                 String msg = "Knitr loaded successfully";
                 logger.info(msg);
-            }
-            else{
+            } else {
                 String msg = "Knitr loading was unsuccessful";
                 logger.info(msg);
             }
@@ -69,8 +68,7 @@ public class RInterpreter extends Interpreter {
             if (loadSparkR()) {
                 String msg = "sparkR loaded successfully";
                 logger.info(msg);
-            }
-            else{
+            } else {
                 String msg = "sparkR loading was unsuccessful";
                 logger.info(msg);
             }
@@ -134,7 +132,7 @@ public class RInterpreter extends Interpreter {
             return new InterpreterResult(InterpreterResult.Code.ERROR, e.getMessage());
         } finally {
             try {
-                if(writer != null) {
+                if (writer != null) {
                     writer.close();
                 }
             } catch (Exception e) {
@@ -213,11 +211,11 @@ public class RInterpreter extends Interpreter {
         return false;
     }
 
-    private boolean loadKnitr(){
+    private boolean loadKnitr() {
         String[] loadedLibraries;
         try {
-            loadedLibraries =  connection.eval("library('knitr')").asStrings();
-            if(loadedLibraries[0].equals("knitr")){
+            loadedLibraries = connection.eval("library('knitr')").asStrings();
+            if (loadedLibraries[0].equals("knitr")) {
                 return true;
             }
         } catch (RserveException e) {
