@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class RInterpreter extends Interpreter {
-    Logger logger = LoggerFactory.getLogger(RInterpreter.class);
+    private final Logger logger = LoggerFactory.getLogger(RInterpreter.class);
     private RConnection connection;
 
     static {
@@ -51,11 +51,12 @@ public class RInterpreter extends Interpreter {
         try {
             connection = new RConnection();
             logger.info("Connected to an Rserve instance");
-            if(loadRMarkdown()){
-                logger.info("Rmarkdown loaded successfully");
-            }
-            else{
-                logger.info("Rmarkdown loading was unsuccessful");
+            if (loadRMarkdown()) {
+                String msg = "Rmarkdown loaded successfully";
+                logger.info(msg);
+            } else {
+                String msg = "Rmarkdown loading was unsuccessful";
+                logger.info(msg);
             }
 
             connection.voidEval("getFunctionNames <- function() {\n" +
@@ -64,13 +65,15 @@ public class RInterpreter extends Interpreter {
                     "    return(sort(unlist(lapply(loaded, lsf.str))))\n" +
                     "}");
             if (loadSparkR()) {
-                logger.info("sparkR loaded successfully");
-            }
-            else{
-                logger.info("sparkR loading was unsuccessful");
+                String msg = "sparkR loaded successfully";
+                logger.info(msg);
+            } else {
+                String msg = "sparkR loading was unsuccessful";
+                logger.info(msg);
             }
         } catch (RserveException e) {
-            logger.error("No Rserve instance available!", e);
+            String msg = "No Rserve instance available!";
+            logger.error(msg, e);
         }
     }
 
@@ -116,7 +119,8 @@ public class RInterpreter extends Interpreter {
             // Only keep the bare results.
             String htmlOut = html.substring(html.indexOf("<body>") + 7, html.indexOf("</body>") - 1)
                     .replaceAll("<code>", "").replaceAll("</code>", "").replaceAll("\n\n", "").replaceAll("\n", "<br>")
-                    .replaceAll("<pre>", "<p class='text'>").replaceAll("</pre>", "</p>").replaceAll("<br>","").replaceAll("main-container","");
+                    .replaceAll("<pre>", "<p class='text'>").replaceAll("</pre>", "</p>").replaceAll("<br>", "")
+                    .replaceAll("main-container", "");
 
             return new InterpreterResult(InterpreterResult.Code.SUCCESS, "%html\n" + htmlOut);
         } catch (RserveException e) {
@@ -127,11 +131,12 @@ public class RInterpreter extends Interpreter {
             return new InterpreterResult(InterpreterResult.Code.ERROR, e.getMessage());
         } finally {
             try {
-                if(writer != null) {
+                if (writer != null) {
                     writer.close();
                 }
             } catch (Exception e) {
-                logger.error("Exception while closing BufferedWriter", e.getMessage());
+                String msg = "Exception while closing BufferedWriterr";
+                logger.error(msg, e);
             }
         }
     }
@@ -178,9 +183,11 @@ public class RInterpreter extends Interpreter {
             }
 
         } catch (RserveException e) {
-            logger.warn(e.getMessage());
+            String msg = e.getMessage();
+            logger.warn(msg, e);
         } catch (REXPMismatchException e) {
-            logger.warn(e.getMessage());
+            String msg = e.getMessage();
+            logger.warn(msg, e);
         }
 
         return list;
@@ -198,23 +205,25 @@ public class RInterpreter extends Interpreter {
             connection.voidEval("sqlContext <- sparkRSQL.init(sc)");
             return true;
         } catch (RserveException e) {
-            logger.warn("Error while loading sparkR", e.getMessage());
+            String msg = "Exception while closing BufferedWriterr";
+            logger.warn(msg, e);
         }
-
         return false;
     }
 
-    private boolean loadRMarkdown(){
+    private boolean loadRMarkdown() {
         String[] loadedLibraries;
         try {
-            loadedLibraries =  connection.eval("library('rmarkdown')").asStrings();
-            if(loadedLibraries[0].equals("rmarkdown")){
+            loadedLibraries = connection.eval("library('rmarkdown')").asStrings();
+            if(("rmarkdown").equals(loadedLibraries[0])) {
                 return true;
             }
         } catch (RserveException e) {
-            logger.error("Error while loading rmarkdown", e.getMessage());
+            String msg = "Error while loading rmarkdown";
+            logger.error(msg, e);
         } catch (REXPMismatchException e) {
-            logger.error("Regular expression mismatch error",e.getMessage());
+            String msg = "Regular expression mismatch error";
+            logger.error(msg, e);
         }
         return false;
     }
